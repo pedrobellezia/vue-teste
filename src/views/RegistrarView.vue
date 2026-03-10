@@ -48,13 +48,21 @@ async function enviar() {
   const formData = new FormData()
   files.value.forEach((file) => {
     formData.append('file', file)
+    console.log('[enviar] Arquivo adicionado ao FormData:', file.name, file.size, file.type)
   })
 
+  const url = `${API_URL}/cnd`
+  console.log('[enviar] URL alvo:', url)
+  console.log('[enviar] API_URL:', API_URL)
+
   try {
-    const response = await fetch(`${API_URL}/cnd`, {
+    console.log('[enviar] Iniciando fetch...')
+    const response = await fetch(url, {
       method: 'POST',
       body: formData,
     })
+
+    console.log('[enviar] Resposta recebida — status:', response.status, response.statusText)
 
     if (!response.ok) {
       throw new Error(`Erro ${response.status}: ${response.statusText}`)
@@ -63,6 +71,8 @@ async function enviar() {
     status.value = 'success'
     files.value = []
   } catch (err) {
+    console.error('[enviar] Erro no fetch:', err)
+    console.error('[enviar] Mensagem:', err.message)
     status.value = 'error'
     errorMsg.value = err.message
   }
