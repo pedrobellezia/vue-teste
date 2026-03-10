@@ -1,7 +1,7 @@
 import {ref} from 'vue'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-const API_BASE_PATH = import.meta.env.VITE_API_BASE_PATH || '/fornecedor'
+const API_URL = import.meta.env.VITE_API_URL
+const API_BASE_PATH = import.meta.env.VITE_API_BASE_PATH
 
 export function useFornecedor() {
     const fornecedorData = ref(null)
