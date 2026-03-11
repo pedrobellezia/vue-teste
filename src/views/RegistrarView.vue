@@ -9,6 +9,8 @@ const isDragging = ref(false)
 const status = ref(null) // null | 'loading' | 'success' | 'error'
 const errorMsg = ref('')
 const fileInput = ref(null)
+const errorList = ref([])
+const successList = ref([])
 
 function onFileChange(event) {
   addFiles(event.target.files)
@@ -68,13 +70,20 @@ async function enviar() {
       throw new Error(`Erro ${response.status}: ${response.statusText}`)
     }
 
-    const errorList = []
+    errorList.value = []
+    successList.value = []
     for (const result of responseData.data) {
       if (!result.success) {
-        errorList.push({file: result.file, message: result.error})
+        const message = typeof result.error === 'string'
+          ? result.error
+          : 'Erro ao processar o arquivo ou ele não é uma CND válida.'
+        errorList.value.push({file: result.file, message})
+      } else {
+        successList.value.push({file: result.file})
       }
     }
 
+    status.value = 'success'
 
   } catch (err) {
     console.error('[enviar] Erro no fetch:', err)
@@ -88,6 +97,16 @@ function resetStatus() {
   console.log('[RegistrarView] resetStatus - limpando feedback')
   status.value = null
   errorMsg.value = ''
+  errorList.value = []
+  successList.value = []
+}
+
+function removeSuccess(file) {
+  successList.value = successList.value.filter((i) => i.file !== file)
+}
+
+function removeError(file) {
+  errorList.value = errorList.value.filter((i) => i.file !== file)
 }
 
 </script>
@@ -136,9 +155,13 @@ function resetStatus() {
       </div>
 
       <!-- Feedback -->
-      <div v-if="status === 'success'" class="feedback feedback--success">
-        <span>DOCUMENTOS ENVIADOS COM SUCESSO</span>
-        <button class="feedback__close" @click="resetStatus">✕</button>
+      <div
+          v-for="item in successList"
+          :key="item.file"
+          class="feedback feedback--success"
+      >
+        <span>ARQUIVO <strong>{{ item.file }}</strong> ENVIADO COM SUCESSO</span>
+        <button class="feedback__close" @click="removeSuccess(item.file)">✕</button>
       </div>
 
       <div
@@ -150,7 +173,7 @@ function resetStatus() {
   <span>
     ERRO NO ARQUIVO <strong>{{ item.file }}</strong>: {{ item.message }}
   </span>
-        <button class="feedback__close" @click="resetStatus(item)">✕</button>
+        <button class="feedback__close" @click="removeError(item.file)">✕</button>
       </div>
 
       <!-- Submit -->

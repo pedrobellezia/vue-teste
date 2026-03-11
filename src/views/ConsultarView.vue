@@ -31,7 +31,7 @@ watch(loading, (newValue) => {
     <div class="container">
       <header class="page-header">
         <RouterLink to="/" class="back-link">← Voltar</RouterLink>
-        <h1>Consulta de Cnd's</h1>
+        <h1>Consulta de Cnds</h1>
       </header>
 
       <SearchBar ref="searchBarRef" @search="handleSearch" />
