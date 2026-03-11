@@ -64,6 +64,9 @@ async function enviar() {
 
     console.log('[enviar] Resposta recebida — status:', response.status, response.statusText)
 
+    const responseData = await response.json()
+    console.log('[enviar] Corpo da resposta:', responseData)
+
     if (!response.ok) {
       throw new Error(`Erro ${response.status}: ${response.statusText}`)
     }
@@ -79,6 +82,7 @@ async function enviar() {
 }
 
 function resetStatus() {
+  console.log('[RegistrarView] resetStatus - limpando feedback')
   status.value = null
   errorMsg.value = ''
 }

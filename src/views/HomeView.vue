@@ -21,6 +21,13 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
+import { onMounted } from 'vue'
+
+console.log('[HomeView] Componente carregado')
+
+onMounted(() => {
+  console.log('[HomeView] Componente montado')
+})
 </script>
 
 <style scoped>
