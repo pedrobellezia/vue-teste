@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import {ref} from 'vue'
+import {RouterLink} from 'vue-router'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -48,12 +48,9 @@ async function enviar() {
   const formData = new FormData()
   files.value.forEach((file) => {
     formData.append('file', file)
-    console.log('[enviar] Arquivo adicionado ao FormData:', file.name, file.size, file.type)
   })
 
   const url = `${API_URL}/cnd`
-  console.log('[enviar] URL alvo:', url)
-  console.log('[enviar] API_URL:', API_URL)
 
   try {
     console.log('[enviar] Iniciando fetch...')
@@ -71,13 +68,19 @@ async function enviar() {
       throw new Error(`Erro ${response.status}: ${response.statusText}`)
     }
 
-    status.value = 'success'
-    files.value = []
+    const errorList = []
+    for (const result of responseData.data) {
+      if (!result.success) {
+        errorList.push({file: result.file, message: result.error})
+      }
+    }
+
+
   } catch (err) {
     console.error('[enviar] Erro no fetch:', err)
     console.error('[enviar] Mensagem:', err.message)
     status.value = 'error'
-    errorMsg.value = err.message
+    errorMsg.value = 'Falha ao enviar os documentos. Tente novamente.'
   }
 }
 
@@ -86,6 +89,7 @@ function resetStatus() {
   status.value = null
   errorMsg.value = ''
 }
+
 </script>
 
 <template>
@@ -98,19 +102,19 @@ function resetStatus() {
     <div class="container">
       <!-- Drop Zone -->
       <div
-        class="drop-zone"
-        :class="{ 'drop-zone--active': isDragging }"
-        @dragover.prevent="isDragging = true"
-        @dragleave.prevent="isDragging = false"
-        @drop.prevent="onDrop"
-        @click="fileInput.click()"
+          class="drop-zone"
+          :class="{ 'drop-zone--active': isDragging }"
+          @dragover.prevent="isDragging = true"
+          @dragleave.prevent="isDragging = false"
+          @drop.prevent="onDrop"
+          @click="fileInput.click()"
       >
         <input
-          ref="fileInput"
-          type="file"
-          multiple
-          class="file-input"
-          @change="onFileChange"
+            ref="fileInput"
+            type="file"
+            multiple
+            class="file-input"
+            @change="onFileChange"
         />
         <p class="drop-zone__text">CLIQUE OU ARRASTE OS ARQUIVOS AQUI</p>
         <p class="drop-zone__hint">Suporta múltiplos arquivos</p>
@@ -119,9 +123,9 @@ function resetStatus() {
       <!-- File List -->
       <div v-if="files.length > 0" class="file-list">
         <div
-          v-for="(file, index) in files"
-          :key="index"
-          class="file-item"
+            v-for="(file, index) in files"
+            :key="index"
+            class="file-item"
         >
           <div class="file-item__info">
             <span class="file-item__name">{{ file.name }}</span>
@@ -137,18 +141,25 @@ function resetStatus() {
         <button class="feedback__close" @click="resetStatus">✕</button>
       </div>
 
-      <div v-if="status === 'error'" class="feedback feedback--error">
-        <span>{{ errorMsg }}</span>
-        <button class="feedback__close" @click="resetStatus">✕</button>
+      <div
+          v-if="errorList && errorList.length"
+          v-for="item in errorList"
+          :key="item.file"
+          class="feedback feedback--error"
+      >
+  <span>
+    ERRO NO ARQUIVO <strong>{{ item.file }}</strong>: {{ item.message }}
+  </span>
+        <button class="feedback__close" @click="resetStatus(item)">✕</button>
       </div>
 
       <!-- Submit -->
       <button
-        class="btn-enviar"
-        :disabled="files.length === 0 || status === 'loading'"
-        @click="enviar"
+          class="btn-enviar"
+          :disabled="files.length === 0 || status === 'loading'"
+          @click="enviar"
       >
-        <span v-if="status === 'loading'" class="spinner" />
+        <span v-if="status === 'loading'" class="spinner"/>
         <span v-else>
           {{ files.length > 0 ? `ENVIAR (${files.length})` : 'ENVIAR' }}
         </span>
@@ -404,6 +415,8 @@ h1 {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
