@@ -352,6 +352,10 @@ h1 {
   color: #fff;
 }
 
+.feedback--warning .feedback__close {
+  color: #000;
+}
+
 .feedback--error .feedback__close {
   color: #000;
 }

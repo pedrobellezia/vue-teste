@@ -20,14 +20,9 @@ const handleSearch = async (cnpj) => {
 }
 
 watch(loading, (newValue) => {
-  console.log('[ConsultarView] Estado de loading mudou:', newValue)
   if (searchBarRef.value) {
     searchBarRef.value.setLoading(newValue)
   }
-})
-
-watch(fornecedorData, (newValue) => {
-  console.log('[ConsultarView] fornecedorData atualizado:', newValue)
 })
 </script>
 
