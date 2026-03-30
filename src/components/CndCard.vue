@@ -8,6 +8,10 @@ defineProps({
 
 const API_URL = import.meta.env.VITE_API_URL
 
+const getTipo = (cnd) => {
+  return cnd?.tipo || cnd?.cndtype?.name || 'indefinida'
+}
+
 const isVencido = (dateString) => {
   return new Date(dateString) < new Date()
 }
@@ -31,7 +35,7 @@ const formatDate = (dateString) => {
 <template>
   <div class="card">
     <div class="card-header">
-      <h3>CND {{ cnd.tipo.toUpperCase() }}</h3>
+      <h3>CND {{ getTipo(cnd).toUpperCase() }}</h3>
       <span
           class="status-badge"
           :style="{ backgroundColor: getStatusColor(cnd.status, cnd.validade) }"

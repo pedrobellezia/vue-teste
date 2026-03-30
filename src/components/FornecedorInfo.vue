@@ -11,6 +11,7 @@ defineProps({
 })
 
 const formatCNPJ = (value) => {
+  if (!value) return ''
   const numbers = value.replace(/\D/g, '')
   return numbers
     .replace(/^(\d{2})(\d)/, '$1.$2')
