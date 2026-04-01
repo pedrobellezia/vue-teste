@@ -24,7 +24,6 @@ export function useFornecedor() {
         fornecedorData.value = null
 
         try {
-            // Monta a URL completa usando as variáveis de ambiente
             const url = `${API_URL}${API_BASE_PATH}/${cnpj}?limit=1`
 
             const response = await fetch(url)

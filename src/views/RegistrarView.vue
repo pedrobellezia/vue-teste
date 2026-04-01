@@ -55,16 +55,12 @@ async function enviar() {
   const url = `${API_URL}/cnd`
 
   try {
-    console.log('[enviar] Iniciando fetch...')
     const response = await fetch(url, {
       method: 'POST',
       body: formData,
     })
 
-    console.log('[enviar] Resposta recebida — status:', response.status, response.statusText)
-
     const responseData = await response.json()
-    console.log('[enviar] Corpo da resposta:', responseData)
 
     if (!response.ok) {
       throw new Error(`Erro ${response.status}: ${response.statusText}`)
